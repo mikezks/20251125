@@ -1,0 +1,38 @@
+[
+  {
+    "route": "home",
+    "label": "Home",
+    "icon": "home"
+  },
+  {
+    "route": "booking",
+    "label": "Booking",
+    "icon": "booking",
+    "description": [
+      "Allows to lookup flights that are returned in a result overview screen.",
+      "Provides a flight edit view.",
+      "Allows to select flights.",
+      "Allows to add a flight delay."
+    ]
+  },
+  {
+    "route": "checkin",
+    "label": "Checkin",
+    "icon": "checkin",
+    "description": [
+      "Allows to lookup passenger that are returned in a result overview screen.",
+      "Provides a passenger edit view.",
+      "Allows to select passengers."
+    ]
+  },
+  {
+    "route": "boarding",
+    "label": "Boarding",
+    "icon": "boarding"
+  },
+  {
+    "route": "miles",
+    "label": "Miles",
+    "icon": "miles"
+  }
+]

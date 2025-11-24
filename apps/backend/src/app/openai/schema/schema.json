@@ -1,0 +1,32 @@
+{
+  "type": "object",
+  "properties": {
+    "navigationConfig": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "label": { "type": "string" },
+              "route": { "const": "string" },
+              "icon": { "type": "string" }
+            },
+            "required": [
+              "label",
+              "route",
+              "icon"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "message": { "type": "string" }
+  },
+  "required": [
+    "navigationConfig",
+    "message"
+  ],
+  "additionalProperties": false
+}

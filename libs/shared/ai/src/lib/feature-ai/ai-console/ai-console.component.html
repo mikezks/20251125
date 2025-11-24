@@ -1,0 +1,97 @@
+<div class="card">
+  <div class="card-header">
+    <h2 class="card-title">AI Console - Navigation Customizer</h2>
+  </div>
+
+  <div class="card-body">
+    <form [formGroup]="describeForm">
+      <div class="form-group">
+        <label for="describe">Describe Navigation:</label>
+        <textarea
+          id="describe"
+          formControlName="describe"
+          class="form-control form-textbox"
+          spellcheck="false"
+          placeholder="Enter your navigation description in natural language"
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <button
+          (click)="submit()"
+          [disabled]="
+            !describeForm.valid
+            || aiService.aiResource.isLoading()
+          "
+          class="btn btn-default"
+          [class.btn-info]="
+            aiService.aiResource.status() === 'idle'
+            || aiService.aiResource.isLoading()
+          "
+          [class.btn-success]="
+            aiService.aiResource.status() === 'resolved'
+            || aiService.aiResource.status() === 'local'
+          "
+        >
+          Submit
+        </button>
+        <button
+          (click)="setDemoPrompt()"
+          class="btn btn-info"
+        >
+          Demo
+        </button>
+        <button
+          (click)="setRemovePrompt()"
+          class="btn btn-info"
+        >
+          Remove All
+        </button>
+        <button
+          (click)="describeForm.reset()"
+          class="btn btn-danger"
+        >
+          Reset
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+@if (
+  aiService.aiResource.status() !== 'idle'
+  && !aiService.aiResource.isLoading()
+  && aiService.aiResource.hasValue()
+) {
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">Navigation Structure</h2>
+    </div>
+
+    <div class="card-body">
+      <form [formGroup]="structureForm">
+        <div class="form-group">
+          <label for="config">Form Config:</label>
+          <textarea
+            id="config"
+            formControlName="config"
+            class="form-control form-textbox form-textbox-config"
+            spellcheck="false"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <button
+            (click)="updateFormConfig()"
+            [disabled]="!structureForm.valid || !aiService.dirtyConfig()"
+            class="btn btn-default"
+            [class.btn-info]="aiService.dirtyConfig()"
+            [class.btn-success]="!aiService.dirtyConfig()"
+          >
+            Update Form Config
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
