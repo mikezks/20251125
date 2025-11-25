@@ -21,6 +21,42 @@
 			"prefix": "app",
 			"architect": {
 				"build": {
+					"builder": "@angular-architects/native-federation:build",
+					"options": {},
+					"configurations": {
+						"production": {
+							"target": "shell:esbuild:production"
+						},
+						"development": {
+							"target": "shell:esbuild:development",
+							"dev": true
+						}
+					},
+					"defaultConfiguration": "production"
+				},
+				"serve": {
+					"builder": "@angular-architects/native-federation:build",
+					"options": {
+						"target": "shell:serve-original:development",
+						"rebuildDelay": 0,
+						"dev": true,
+						"port": 0
+					}
+				},
+				"test": {
+					"builder": "@angular/build:unit-test"
+				},
+				"lint": {
+					"builder": "@angular-eslint/builder:lint",
+					"options": {
+						"lintFilePatterns": [
+							"apps/shell/**/*.ts",
+							"apps/shell/**/*.html"
+						],
+						"eslintConfig": "apps/shell/eslint.config.js"
+					}
+				},
+				"esbuild": {
 					"builder": "@angular/build:application",
 					"options": {
 						"browser": "apps/shell/src/main.ts",
@@ -36,6 +72,9 @@
 							"@angular/material/prebuilt-themes/indigo-pink.css",
 							"@angular-architects/paper-design/assets/css/bootstrap.css",
 							"apps/shell/src/styles.scss"
+						],
+						"polyfills": [
+							"es-module-shims"
 						]
 					},
 					"configurations": {
@@ -62,29 +101,19 @@
 					},
 					"defaultConfiguration": "production"
 				},
-				"serve": {
+				"serve-original": {
 					"builder": "@angular/build:dev-server",
 					"configurations": {
 						"production": {
-							"buildTarget": "shell:build:production"
+							"buildTarget": "shell:esbuild:production"
 						},
 						"development": {
-							"buildTarget": "shell:build:development"
+							"buildTarget": "shell:esbuild:development"
 						}
 					},
-					"defaultConfiguration": "development"
-				},
-				"test": {
-					"builder": "@angular/build:unit-test"
-				},
-				"lint": {
-					"builder": "@angular-eslint/builder:lint",
+					"defaultConfiguration": "development",
 					"options": {
-						"lintFilePatterns": [
-							"apps/shell/**/*.ts",
-							"apps/shell/**/*.html"
-						],
-						"eslintConfig": "apps/shell/eslint.config.js"
+						"port": 4200
 					}
 				}
 			}
