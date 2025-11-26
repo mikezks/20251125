@@ -43,18 +43,21 @@ export class Airport {
   protected countries = signal(
     Object.keys(COUNTRIES_WITH_REGIONS)
   );
-  protected country = linkedSignal({
+  // Extended signature
+  protected country = linkedSignal<string[], string>({
     source: this.countries,
-    computation: source => source[0]
+    computation: (source, previous) => {
+      console.log(previous?.source, previous?.value);
+      return source[0];
+    }
   });
-  protected regions = linkedSignal({
-    source: this.country,
-    computation: source => COUNTRIES_WITH_REGIONS[source]
-  });
-  protected region = linkedSignal({
-    source: this.regions,
-    computation: source => source[0]
-  });
+  // Simple signature
+  protected regions = linkedSignal(
+    () => COUNTRIES_WITH_REGIONS[this.country()]
+  );
+  protected region = linkedSignal(
+    () => this.regions()[0]
+  );
 
   constructor() {
     effect(() => console.log({
