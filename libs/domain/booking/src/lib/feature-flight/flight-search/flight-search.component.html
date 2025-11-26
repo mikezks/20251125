@@ -5,10 +5,7 @@
     </div>
     
     <div class="card-body">
-      <app-flight-filter
-        [filter]="filter()"
-        (filterChange)="filter.set($event)"
-      >
+      <app-flight-filter [(filter)]="filter">
         @if (flights.length) {
           <div class="flight-filter-info">
             {{ flights.length }} flights found!
