@@ -38,8 +38,7 @@ export class FlightSearchComponent {
   constructor() {
     effect(() => console.log(this.route()));
     // Explicit Effect
-    let activeConsumer: ReactiveNode | null;
-    activeConsumer = effect(() => {
+    effect(() => {
       this.filter();
       untracked(() => this.search());
     });
@@ -51,8 +50,6 @@ export class FlightSearchComponent {
     }
 
     this.ticketsFacade.search(this.filter());
-
-    console.log(this.route[SIGNAL])
   }
 
   protected delay(flight: Flight): void {
