@@ -21,10 +21,6 @@ import { FlightFilterComponent } from '../../ui-flight/flight-filter/flight-filt
 export class FlightSearchComponent {
   protected store = inject(BookingStore);
 
-  protected filter = this.store.filter
-  protected basket = this.store.basket
-  protected flights = this.store.flightEntities
-
   protected delay(flight: Flight): void {
     const oldFlight = flight;
     const oldDate = new Date(oldFlight.date);
@@ -37,17 +33,9 @@ export class FlightSearchComponent {
     };
 
     this.store.setFlights(
-      this.flights().map(
+      this.store.flightEntities().map(
         flight => flight.id === newFlight.id ? newFlight : flight
       )
     );
-  }
-
-  protected updateBasket(id: number, selected: boolean): void {
-    this.store.updateBasket(id, selected);
-  }
-
-  protected reset(): void {
-    this.store.setFlights([]);
   }
 }
