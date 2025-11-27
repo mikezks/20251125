@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { tapResponse } from '@ngrx/operators';
-import { patchState, signalStore, withComputed, withHooks, withMethods, withProps, withState } from '@ngrx/signals';
+import { patchState, signalStore, type, withComputed, withHooks, withMethods, withProps, withState } from '@ngrx/signals';
+import { setAllEntities, withEntities } from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap } from 'rxjs';
 import { FlightService } from '../data-access/flight.service';
@@ -11,7 +12,6 @@ import { FlightFilter } from '../model/flight-filter';
 export interface BookingState {
   filter: FlightFilter;
   basket: Record<number, boolean>;
-  flights: Flight[];
 }
 
 export const initalBookingState: BookingState = {
@@ -24,16 +24,36 @@ export const initalBookingState: BookingState = {
     3: true,
     5: true,
   },
-  flights: [],
 };
+
+/* const entityDemo = {
+  entities: {
+    1: {
+      id: 1,
+      from: 'London',
+      to: 'Rio',
+      date: new Date().toISOString(),
+      delayed: false
+    },
+    8: {
+      id: 1,
+      from: 'London',
+      to: 'Madrid',
+      date: new Date().toISOString(),
+      delayed: false
+    }
+  },
+  ids: [8, 1]
+}; */
 
 
 export const BookingStore = signalStore(
   { providedIn: 'root' },
   // State
   withState(initalBookingState),
+  withEntities({ entity: type<Flight>(), collection: 'flight' }),
   withComputed(store => ({
-    delayedFlights: () => store.flights().filter(flight => flight.delayed),
+    delayedFlights: () => store.flightEntities ().filter(flight => flight.delayed),
   })),
   withProps(() => ({
     _flightService: inject(FlightService)
@@ -41,7 +61,9 @@ export const BookingStore = signalStore(
   // Updater
   withMethods(store => ({
     setFilter: (filter: FlightFilter) => patchState(store, { filter }),
-    setFlights: (flights: Flight[]) => patchState(store, { flights }),
+    setFlights: (flights: Flight[]) => patchState(store, 
+      setAllEntities(flights, { collection: 'flight' })
+    ),
     updateBasket: (id: number, selected: boolean) => patchState(store, state => ({
       basket: {
         ...state.basket,

@@ -23,7 +23,7 @@ export class FlightSearchComponent {
 
   protected filter = this.store.filter
   protected basket = this.store.basket
-  protected flights = this.store.flights
+  protected flights = this.store.flightEntities
 
   protected delay(flight: Flight): void {
     const oldFlight = flight;
