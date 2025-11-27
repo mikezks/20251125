@@ -7,6 +7,7 @@ import { pipe, switchMap } from 'rxjs';
 import { FlightService } from '../data-access/flight.service';
 import { Flight } from '../model/flight';
 import { FlightFilter } from '../model/flight-filter';
+import { delegated } from '@flight-demo/shared/core';
 
 
 export interface BookingState {
@@ -41,9 +42,6 @@ export const BookingStore = signalStore(
   withComputed(store => ({
     delayedFlights: () => store.flightEntities ().filter(flight => flight.delayed),
   })),
-  withProps(() => ({
-    _flightService: inject(FlightService)
-  })),
   // Updater
   withMethods(store => ({
     setFilter: (filter: FlightFilter) => patchState(store, { filter }),
@@ -57,6 +55,13 @@ export const BookingStore = signalStore(
       }
     })),
     resetFlights: () => patchState(store, removeAllEntities(flightConfig)),
+  })),
+  withProps(store => ({
+    _flightService: inject(FlightService),
+    writableFilter: delegated(
+      store.filter,
+      store.setFilter
+    ),
   })),
   // Side-Effects
   withMethods(store => ({
