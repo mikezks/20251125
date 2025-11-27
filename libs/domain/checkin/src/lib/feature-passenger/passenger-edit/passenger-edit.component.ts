@@ -1,5 +1,5 @@
 import { httpResource } from '@angular/common/http';
-import { booleanAttribute, Component, effect, input, model, numberAttribute } from '@angular/core';
+import { Component, effect, input, model, numberAttribute } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { customError, Field, form, required, schema, validate } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
