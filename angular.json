@@ -69,7 +69,8 @@
               "buildTarget": "shell:build:production"
             },
             "development": {
-              "buildTarget": "shell:build:development"
+              "buildTarget": "shell:build:development",
+              "hmr": false
             }
           },
           "defaultConfiguration": "development"

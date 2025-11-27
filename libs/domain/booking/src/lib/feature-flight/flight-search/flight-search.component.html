@@ -7,6 +7,7 @@
   
   <div class="card-body">
     <app-flight-filter
+      #flightFilter
       [filter]="store.filter()"
       (filterChange)="store.setFilter($event)"
     >
@@ -24,24 +25,32 @@
   </div>
 </div>
 
-<div class="row">
-  @for (flight of flights; track flight) {
-    <div class="col-xs-12 col-sm-6 col-md-4">
-      <app-flight-card
-        [item]="flight"
-        [selected]="store.basket()[flight.id]"
-        (selectedChange)="store.updateBasket(flight.id, $event)"
-        (delayTrigger)="delay($event)"
-      />
-    </div>
-  }
-</div>
+@defer (on interaction(flightFilter); prefetch on timer(6s)) {
+  <div class="row">
+    @for (flight of flights; track flight) {
+      <div class="col-xs-12 col-sm-6 col-md-4">
+        <app-flight-card
+          [item]="flight"
+          [selected]="store.basket()[flight.id]"
+          (selectedChange)="store.updateBasket(flight.id, $event)"
+          (delayTrigger)="delay($event)"
+        />
+      </div>
+    }
+  </div>
+} @placeholder {
+  <p>Relax, content will be shown at the right time! :)</p>
+}
 
-<div class="card">
-  <div class="card-header">
-    <h2 class="card-title">Basket</h2>
+@defer (on timer(5s)) {
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">Basket</h2>
+    </div>
+    <div class="card-body">
+      <pre>{{ store.basket() | json }}</pre>
+    </div>
   </div>
-  <div class="card-body">
-    <pre>{{ store.basket() | json }}</pre>
-  </div>
-</div>
+} @placeholder {
+  <p>Relax, content will be shown at the right time! :)</p>
+}
