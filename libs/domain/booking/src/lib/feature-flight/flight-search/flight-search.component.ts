@@ -1,12 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Flight } from '@flight-demo/domain/booking-api-boarding';
-import { FlightService } from '../../logic-flight/data-access/flight.service';
-import { FlightFilter } from '../../logic-flight/model/flight-filter';
+import { BookingStore } from '../../logic-flight/state/booking.store';
 import { FlightCardComponent } from '../../ui-flight/flight-card/flight-card.component';
 import { FlightFilterComponent } from '../../ui-flight/flight-filter/flight-filter.component';
-import { BookingStore } from '../../logic-flight/state/booking.store';
 
 
 @Component({
@@ -21,37 +19,11 @@ import { BookingStore } from '../../logic-flight/state/booking.store';
   templateUrl: './flight-search.component.html',
 })
 export class FlightSearchComponent {
-  private flightService = inject(FlightService);
-  private store = inject(BookingStore);
+  protected store = inject(BookingStore);
 
-  protected filter = {
-    from: 'London',
-    to: 'New York',
-    urgent: false
-  };
-  protected basket: Record<number, boolean> = {
-    3: true,
-    5: true
-  };
-  protected flights: Flight[] = [];
-
-  constructor() {
-    effect(() => console.log(this.store.filter.from()));
-  }
-
-  protected search(filter: FlightFilter): void {
-    this.filter = filter;
-
-    if (!this.filter.from || !this.filter.to) {
-      return;
-    }
-
-    this.flightService.find(
-      this.filter.from, this.filter.to, this.filter.urgent
-    ).subscribe(
-      flights => this.flights = flights
-    );
-  }
+  protected filter = this.store.filter
+  protected basket = this.store.basket
+  protected flights = this.store.flights
 
   protected delay(flight: Flight): void {
     const oldFlight = flight;
@@ -64,12 +36,18 @@ export class FlightSearchComponent {
       delayed: true
     };
 
-    this.flights = this.flights.map(
-      flight => flight.id === newFlight.id ? newFlight : flight
+    this.store.setFlights(
+      this.flights().map(
+        flight => flight.id === newFlight.id ? newFlight : flight
+      )
     );
   }
 
+  protected updateBasket(id: number, selected: boolean): void {
+    this.store.updateBasket(id, selected);
+  }
+
   protected reset(): void {
-    this.flights = [];
+    this.store.setFlights([]);
   }
 }
