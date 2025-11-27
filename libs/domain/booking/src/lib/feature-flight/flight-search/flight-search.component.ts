@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Flight } from '@flight-demo/domain/booking-api-boarding';
 import { FlightService } from '../../logic-flight/data-access/flight.service';
 import { FlightFilter } from '../../logic-flight/model/flight-filter';
 import { FlightCardComponent } from '../../ui-flight/flight-card/flight-card.component';
 import { FlightFilterComponent } from '../../ui-flight/flight-filter/flight-filter.component';
+import { BookingStore } from '../../logic-flight/state/booking.store';
 
 
 @Component({
@@ -21,6 +22,7 @@ import { FlightFilterComponent } from '../../ui-flight/flight-filter/flight-filt
 })
 export class FlightSearchComponent {
   private flightService = inject(FlightService);
+  private store = inject(BookingStore);
 
   protected filter = {
     from: 'London',
@@ -32,6 +34,10 @@ export class FlightSearchComponent {
     5: true
   };
   protected flights: Flight[] = [];
+
+  constructor() {
+    effect(() => console.log(this.store.filter.from()));
+  }
 
   protected search(filter: FlightFilter): void {
     this.filter = filter;
