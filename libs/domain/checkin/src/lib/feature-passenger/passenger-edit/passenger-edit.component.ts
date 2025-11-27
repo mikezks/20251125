@@ -1,5 +1,5 @@
 import { httpResource } from '@angular/common/http';
-import { Component, input, numberAttribute } from '@angular/core';
+import { booleanAttribute, Component, effect, input, model, numberAttribute } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { customError, Field, form, required, schema, validate } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
@@ -40,6 +40,7 @@ export const passengerSchema = schema<Passenger>(passengerPath => {
 })
 export class PassengerEditComponent {
   readonly id = input(0, { transform: numberAttribute });
+  readonly isRequired = model(true);
 
   // (1) Data Model: Writable Signal
   protected readonly passengerResource = httpResource<Passenger>(() => ({
@@ -48,7 +49,17 @@ export class PassengerEditComponent {
   }), { defaultValue: initialPassenger });
 
   // (2) Field State: value, valid, dirty, touched, readonly, hidden, etc.
-  protected readonly editForm = form(this.passengerResource.value, passengerSchema);
+  protected readonly editForm = form(this.passengerResource.value, passengerPath => {
+    required(passengerPath.name, {
+      when: () => this.isRequired() !== false
+    });
+  });
+
+  constructor() {
+    setTimeout(() => this.isRequired.set(false), 5_000);
+    setTimeout(() => this.isRequired.set(true), 10_000);
+    effect(() => console.log({ isRequired: this.isRequired() }));
+  }
 
   protected save(): void {
     console.log(this.passengerResource.value());
