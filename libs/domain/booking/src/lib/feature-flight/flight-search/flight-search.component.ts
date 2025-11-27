@@ -35,10 +35,6 @@ export class FlightSearchComponent {
   protected flights = this.ticketsFacade.flights;
 
   constructor() {
-    /* const urgent = this.filter().urgent;
-    const urgentDeepAngular = computed(() => this.filter().urgent);
-    const urgentDeep = this.filter.urgent(); // NgRx */
-    
     effect(() => console.log(this.route()));
     // Explicit Effect
     effect(() => {
