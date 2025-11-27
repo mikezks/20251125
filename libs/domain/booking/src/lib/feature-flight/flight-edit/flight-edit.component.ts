@@ -1,8 +1,7 @@
-import { Component, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, inject, input, numberAttribute } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { routerFeature } from '@flight-demo/shared/state';
-import { Store } from '@ngrx/store';
 import { initialFlight } from '../../logic-flight/model/flight';
+import { BookingStore } from '../../logic-flight/state/booking.store';
 
 
 @Component({
@@ -13,8 +12,9 @@ import { initialFlight } from '../../logic-flight/model/flight';
   templateUrl: './flight-edit.component.html'
 })
 export class FlightEditComponent implements OnChanges {
-  private store = inject(Store);
+  private store = inject(BookingStore);
 
+  readonly id = input.required({ transform: numberAttribute });
   @Input() flight = initialFlight;
 
   protected editForm = inject(NonNullableFormBuilder).group({
@@ -26,9 +26,7 @@ export class FlightEditComponent implements OnChanges {
   });
 
   constructor() {
-    this.store.select(routerFeature.selectRouteParams).subscribe(
-      params => console.log(params)
-    );
+    this.store.loadFlightById(this.id);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
