@@ -1,15 +1,9 @@
 import { httpResource } from '@angular/common/http';
 import { Component, input, numberAttribute } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Field, form, required, schema } from '@angular/forms/signals';
+import { Field, form } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import { initialPassenger, Passenger } from '../../logic-passenger/model/passenger';
-
-
-// (3) Field Logic: disabled, readonly, hidden, default validators, custom validator functions
-export const passengerSchema = schema<Passenger>(passengerPath => {
-  required(passengerPath.name);
-});
 
 
 @Component({
@@ -32,7 +26,7 @@ export class PassengerEditComponent {
   }), { defaultValue: initialPassenger });
 
   // (2) Field State: value, valid, dirty, touched, readonly, hidden, etc.
-  protected readonly editForm = form(this.passengerResource.value, passengerSchema);
+  protected readonly editForm = form(this.passengerResource.value);
 
   protected save(): void {
     console.log(this.passengerResource.value());
