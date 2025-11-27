@@ -1,7 +1,7 @@
 import { httpResource } from '@angular/common/http';
-import { Component, effect, input, model, numberAttribute } from '@angular/core';
+import { Component, input, numberAttribute } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { customError, Field, form, required, schema, validate } from '@angular/forms/signals';
+import { customError, Field, form, required, schema, validate, validateHttp } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import { initialPassenger, Passenger } from '../../logic-passenger/model/passenger';
 
@@ -24,7 +24,22 @@ export const passengerSchema = schema<Passenger>(passengerPath => {
     }
     return null;
   });
-  
+  validateHttp(passengerPath.firstName, {
+    request: ({ value }) => value() && `./allowed-firstnames.json`,
+    onSuccess: (validFirstnames: string[], { value }) => {
+      if (!validFirstnames.includes(value())) {
+        return {
+          kind: 'forbiddenFirstname',
+          message: 'This firstname is not allowed.'
+        }
+      }
+      return null
+    },
+    onError: () => ({
+      kind: 'networkError',
+      message: 'Could not verify firstname.'
+    })
+  })
 });
 
 
@@ -40,7 +55,6 @@ export const passengerSchema = schema<Passenger>(passengerPath => {
 })
 export class PassengerEditComponent {
   readonly id = input(0, { transform: numberAttribute });
-  readonly isRequired = model(true);
 
   // (1) Data Model: Writable Signal
   protected readonly passengerResource = httpResource<Passenger>(() => ({
@@ -49,18 +63,8 @@ export class PassengerEditComponent {
   }), { defaultValue: initialPassenger });
 
   // (2) Field State: value, valid, dirty, touched, readonly, hidden, etc.
-  protected readonly editForm = form(this.passengerResource.value, passengerPath => {
-    required(passengerPath.name, {
-      when: () => this.isRequired() !== false
-    });
-  });
-
-  constructor() {
-    setTimeout(() => this.isRequired.set(false), 5_000);
-    setTimeout(() => this.isRequired.set(true), 10_000);
-    effect(() => console.log({ isRequired: this.isRequired() }));
-  }
-
+  protected readonly editForm = form(this.passengerResource.value, passengerSchema);
+  
   protected save(): void {
     console.log(this.passengerResource.value());
   }
