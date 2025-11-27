@@ -1,14 +1,30 @@
 import { httpResource } from '@angular/common/http';
 import { Component, input, numberAttribute } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Field, form, required, schema } from '@angular/forms/signals';
+import { customError, Field, form, required, schema, validate } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import { initialPassenger, Passenger } from '../../logic-passenger/model/passenger';
 
 
 // (3) Field Logic: disabled, readonly, hidden, default validators, custom validator functions
 export const passengerSchema = schema<Passenger>(passengerPath => {
-  required(passengerPath.name);
+  required(passengerPath.name, {
+    when: ({ valueOf }) => valueOf(passengerPath.firstName) === 'Mary'
+  });
+  validate(passengerPath.passengerStatus, ({ value, valueOf }) => {
+    const id = valueOf(passengerPath.id);
+    console.log(id);
+    const validPassengerStatus = ['A', 'C'];
+    if (!validPassengerStatus.includes(value())) {
+      return customError({
+        kind: 'passengerStatus',
+        message: 'Passenger Status is invalid - please enter one of the following options: '
+          + validPassengerStatus.join(', ')
+      });
+    }
+    return null;
+  });
+  
 });
 
 

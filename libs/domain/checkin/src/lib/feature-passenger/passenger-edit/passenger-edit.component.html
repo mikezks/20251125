@@ -41,13 +41,11 @@
         <label for="status">Status:</label>
         <input id="status" [field]="editForm.passengerStatus" class="form-control" />
       </div>
-      <!-- @if (editForm.controls.passengerStatus.hasError('passengerStatus')) {
-        <div class="alert alert-danger">
-          Please enter a valid passenger status.<br>
-          The following values are allowed:
-          {{ editForm.controls.passengerStatus.errors?.['passengerStatus'].validStatus.join(', ') }}
-        </div>
-      } -->
+      @for (error of editForm.passengerStatus().errors(); track error.kind) {
+        @if (error.kind === 'passengerStatus') {
+          <div class="alert alert-danger">{{ error.message }}</div>
+        }
+      }
     </form>
 
     <div class="form-group">
